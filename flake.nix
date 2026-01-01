@@ -3,28 +3,41 @@
 
     inputs = {
         nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-        flake-utils.url = "github:numtide/flake-utils";
     };
 
-    outputs = inputs@{ self, nixpkgs, flake-utils, ... }:
+    outputs = inputs@{ self, nixpkgs, ... }: let
 
-        # eachDefaultSystem trasforms returned dict like so: {a.b=c;} => {a.${system}.b = c;}
-        flake-utils.lib.eachDefaultSystem (system: {
+        # Note: A variable `system` should only be used in the argument
+        # to `forMySystemsAsAttr` but otherwise be specified explicitly
+        # (for example in `sepcialArgs` to a `nixosConfigurations`).
 
-            # only evaluates once compared to: (import nixpkgs {inherit system;}).callPackage ...
-            packages.monego-font = nixpkgs.legacyPackages.${system}.callPackage ./monego-font {};
+        # Like nixpkgs.lib.forEach but returns result as attr-set with `each` as key.
+        # Note, that identical elements in `each` overwrite each other.
+        forEachAsAttr = each: fn: builtins.foldl' (pre: e: pre // e) {} (map (e: { ${e} = (fn e); }) each);
+        # wrapper of forEachAsAttr with mySystems as elements to map over
+        forMySystemsAsAttr = forEachAsAttr mySystems;
 
-        # eachDefaultSystemPassThrough only makes ${system} available
-        }) // flake-utils.lib.eachDefaultSystemPassThrough (system: {
+        mySystems = [
+            "aarch64-darwin"
+            "aarch64-linux"
+            "x86_64-darwin"
+            "x86_64-linux"
+        ];
 
-            nixosConfigurations.tpe14gen3 = inputs.nixpkgs.lib.nixosSystem {
+    in {
+
+        packages = forMySystemsAsAttr (system: {
+            monego-font = nixpkgs.legacyPackages.${system}.callPackage ./monego-font {};
+        });
+
+        nixosConfigurations = {
+            tpe14gen3 = nixpkgs.lib.nixosSystem {
                 specialArgs = {
-                    monego-font = self.packages.${system}.monego-font;
+                    monego-font = self.packages.x86_64-linux.monego-font;
                 };
                 modules = [ ./configs/tpe14gen3/configuration.nix ];
             };
+        };
 
-        })
-
-    ;
+    };
 }
