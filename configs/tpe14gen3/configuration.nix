@@ -512,6 +512,8 @@ in {
     # users:
     #
 
+    programs.steam.enable = true; # steam games
+
     users.users.auser = {
         initialPassword = "change_me_after_install";
         isNormalUser = true;        # adds to group "users", creates /home/NAME as user's home
