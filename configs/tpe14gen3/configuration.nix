@@ -1,5 +1,8 @@
 # TAGS: TODO, NOTE, CHECK
 
+# NOTE: avoid overlays and if you use them apply them in flake.nix
+# NOTE: DRM in chromium: chromium.override { enableWideVine = true; }
+
 { config, lib, pkgs, monego-font, ... }:
 
 let
@@ -39,11 +42,7 @@ in {
 
     nixpkgs.config.allowUnfree = true;
     # use this instead of nixpkgs.config.packageOverrides:
-    nixpkgs.overlays = [
-        # widevine is google's proprietary DRM software required for spotify etc
-        (final: prev: {chromium = prev.chromium.override { enableWideVine = true; }; })
-
-    ];
+    #nixpkgs.overlays = [];
 
     #
     # system:
