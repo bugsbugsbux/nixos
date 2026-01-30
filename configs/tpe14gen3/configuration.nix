@@ -486,6 +486,7 @@ in {
         # apps:
         brave                       # web browser
         evince                      # pdf viewer
+        thunderbird                 # graphical email client
         gedit                       # graphical file editor
         nautilus                    # graphical file manager
         simple-scan                 # scanner
