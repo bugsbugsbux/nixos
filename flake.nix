@@ -8,30 +8,28 @@
     outputs = inputs@{ self, nixpkgs, ... }: let
 
         # Note: A variable `system` should only be used in the argument
-        # to `forMySystemsAsAttr` but otherwise be specified explicitly
+        # to `perSystem` but otherwise be specified explicitly
         # (for example in `sepcialArgs` to a `nixosConfigurations`).
 
-        # Like nixpkgs.lib.forEach but returns result as attr-set with `each` as key.
-        # Note, that identical elements in `each` overwrite each other.
-        forEachAsAttr = each: fn: builtins.foldl' (pre: e: pre // e) {} (map (e: { ${e} = (fn e); }) each);
-        # wrapper of forEachAsAttr with mySystems as elements to map over
-        forMySystemsAsAttr = forEachAsAttr mySystems;
+        mySystems = [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ];
+        # nixpkgs.lib.genAttrs systems (system: ...) => {systemA = ...; systemB = ...; ...}
+        perSystem = nixpkgs.lib.genAttrs mySystems;
 
-        mySystems = [
-            "aarch64-darwin"
-            "aarch64-linux"
-            "x86_64-darwin"
-            "x86_64-linux"
-        ];
+        # instantiate nixpkgs only once per system
+        # usage: pkgsForSystem.${system}
+        pkgsForSystem = perSystem (system:
+            nixpkgs.legacyPackages.${system} # OR if needed: import nixpkgs { inherit system; config = { allowUnfree = true; ... }; }
+        );
 
     in {
 
-        packages = forMySystemsAsAttr (system: {
-            monego-font = nixpkgs.legacyPackages.${system}.callPackage ./monego-font {};
+        packages = perSystem (system: {
+            monego-font = pkgsForSystem.${system}.callPackage ./monego-font {};
         });
 
-        nixosConfigurations = {
+        nixosConfigurations = { # instantiates own instance from `nixpkgs` used to call lib.nixosSystem
             tpe14gen3 = nixpkgs.lib.nixosSystem {
+                # system = already defined in hardware-configuration.nix
                 specialArgs = {
                     monego-font = self.packages.x86_64-linux.monego-font;
                 };
