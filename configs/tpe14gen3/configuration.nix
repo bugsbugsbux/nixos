@@ -106,8 +106,7 @@ in {
         # firewall.allowedTCPPorts = [ ... ];
         # firewall.allowedUDPPorts = [ ... ];
 
-        networkmanager.enable = true; # if true don't set wireless.enable=true
-        wireless.enable = false;    # uses wpa_supplicant instead of networkmanager
+        networkmanager.enable = true;
 
         ## nat is requird for nixos-containers to access internet
         #nat = {
