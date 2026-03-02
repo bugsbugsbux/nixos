@@ -474,7 +474,8 @@ in {
         xdg-utils                   # open files appropriately
 
         # qemu
-        qemu_full                   # virtualisation
+        # qemu_full                   # virtualisation
+        qemu # fix qemu_full's sphinx error since it depends on python311 which sphinx doesnt support
         quickemu                    # preconfigured virtual machines
 
         # archives
