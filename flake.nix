@@ -1,3 +1,4 @@
+# USAGE: `nix flake update` then `sudo nixos-rebuild switch --flake .`
 {
     description = "my nixos config";
 
