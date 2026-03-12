@@ -8,6 +8,7 @@
 let
     HOSTNAME = "tpe14gen3";
     FIRST_INSTALL = "24.05"; # CHECK: update when reinstalling
+    IntelOrAmd = "amd"; # use lowercase; it's for boot.kernelModules
 in {
     #
     # other config parts:
@@ -338,7 +339,7 @@ in {
 
     # virtualisation
     # kvm hyperviser
-    boot.kernelModules = [ "kvm-amd" "kvm-intel" ];
+    boot.kernelModules = [ "kvm-${IntelOrAmd}" ];
     # libvirt
     virtualisation.libvirtd = {
         enable = true;
