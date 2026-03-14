@@ -12,12 +12,7 @@
         # to `perSystem` but otherwise be specified explicitly
         # (for example in `sepcialArgs` to a `nixosConfigurations`).
 
-        mySystems = [
-            # "aarch64-darwin"
-            # "aarch64-linux"
-            # "x86_64-darwin"
-            "x86_64-linux"
-        ];
+        mySystems = [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ];
         # nixpkgs.lib.genAttrs systems (system: ...) => {systemA = ...; systemB = ...; ...}
         perSystem = nixpkgs.lib.genAttrs mySystems;
 
