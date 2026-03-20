@@ -36,6 +36,13 @@
                 };
                 modules = [ ./configs/tpe14gen3/configuration.nix ];
             };
+            tpe560 = nixpkgs.lib.nixosSystem {
+                # system = already defined in hardware-configuration.nix
+                specialArgs = {
+                    monego-font = self.packages.x86_64-linux.monego-font;
+                };
+                modules = [ ./configs/tpe560/configuration.nix ];
+            };
         };
 
     };
